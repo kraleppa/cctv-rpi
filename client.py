@@ -3,6 +3,7 @@ import imagezmq
 import argparse
 import socket
 import time
+import sys
 
 
 ap = argparse.ArgumentParser()
@@ -17,5 +18,8 @@ vs = VideoStream(src=0).start()  # uncomment for USB camera
 time.sleep(2.0)
 
 while True:
-	frame = vs.read()
-	sender.send_image(rpiName, frame)
+	try:
+		frame = vs.read()
+		sender.send_image(rpiName, frame)
+	except KeyboardInterrupt:
+		sys.exit()

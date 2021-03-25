@@ -11,8 +11,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--prototxt", required=True, help="path to Caffe 'deploy' prototxt file")
 ap.add_argument("-m", "--model", required=True, help="path to Caffe pre-trained model")
 ap.add_argument("-c", "--confidence", type=float, default=0.2, help="minimum probability to filter weak detections")
-ap.add_argument("-mW", "--montageW", required=True, type=int, help="montage frame width")
-ap.add_argument("-mH", "--montageH", required=True, type=int, help="montage frame height")
+ap.add_argument("-mw", "--montage_w", required=True, type=int, help="montage frame width")
+ap.add_argument("-mh", "--montage_h", required=True, type=int, help="montage frame height")
 args = vars(ap.parse_args())
 
 imageHub = imagezmq.ImageHub()
@@ -35,8 +35,8 @@ ACTIVE_CHECK_SECONDS = ESTIMATED_NUM_PIS * ACTIVE_CHECK_PERIOD
 
 # assign montage width and height so we can view all incoming frames
 # in a single "dashboard" FIXME: view in browser
-m_w = args["montageW"]
-m_h = args["montageH"]
+m_w = args["montage_w"]
+m_h = args["montage_h"]
 print("[INFO] detecting: {}...".format(", ".join(obj for obj in CONSIDER)))
 
 while True:

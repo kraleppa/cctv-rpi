@@ -1,17 +1,13 @@
-from flask import Flask, render_template, Response
+from flask import Flask, Response
 from camera import Camera
-import time
 
 app = Flask(__name__)
 camera = Camera()
-camera.run()
+camera.start()
+
 
 @app.after_request
 def add_header(r):
-    """
-	Add headers to both force latest IE rendering or Chrome Frame,
-	and also to cache the rendered page for 10 minutes
-	"""
     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     r.headers["Pragma"] = "no-cache"
     r.headers["Expires"] = "0"
@@ -19,23 +15,16 @@ def add_header(r):
     return r
 
 
-@app.route('/')
-def index():
-    """Video streaming home page."""
-    return render_template('index.html')
-
-
 def gen(cam):
     while True:
         frame = cam.get_frame()
-        print(frame)
         if frame is None:
             continue
         yield (b'--frame\r\n'
                b'Content-Type: image/png\r\n\r\n' + frame + b'\r\n')
 
 
-@app.route("/video_feed")
+@app.route("/")
 def video_feed():
     return Response(gen(camera),
                     mimetype="multipart/x-mixed-replace; boundary=frame")

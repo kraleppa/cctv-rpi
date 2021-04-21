@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
 from camera import Camera
 
 app = Flask(__name__)
@@ -28,6 +28,15 @@ def gen(cam):
 def video_feed():
     return Response(gen(camera),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.route('/recognition/face', methods=['POST'])
+def face_detection_trigger():
+    camera.face_detection = not camera.face_detection
+    if camera.face_detection:
+        return 'Face detection turned ON', 200
+    else:
+        return 'Face detection turned OFF', 200
 
 
 if __name__ == '__main__':

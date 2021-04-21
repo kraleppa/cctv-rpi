@@ -30,7 +30,7 @@ def video_feed():
                     mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
-@app.route('/recognition/face', methods=['POST'])
+@app.route('/detection/face', methods=['POST'])
 def face_detection_trigger():
     camera.face_detection = not camera.face_detection
     if camera.face_detection:

@@ -1,4 +1,5 @@
-import threading
+from concurrent.futures import ThreadPoolExecutor
+from queue import Queue
 
 import cv2
 from threading import Thread
@@ -18,6 +19,10 @@ class Camera(Thread):
         self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.face_detection = True
 
+        self.queue_in = Queue()
+        self.queue_out = Queue()
+        self.tpe = ThreadPoolExecutor(15)
+
     def run(self):
         delay_time = 1 / self.fps
         while True:
@@ -28,19 +33,35 @@ class Camera(Thread):
             if self.face_detection:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 if code:
-                    faces = self.faceCascade.detectMultiScale(
-                        gray,
-                        scaleFactor=1.2,
-                        minNeighbors=5,
-                        minSize=(30, 30),
-                        flags=cv2.CASCADE_SCALE_IMAGE
-                    )
-
-                    for (x, y, w, h) in faces:
-                        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    self.tpe.submit(self._detect_face, gray, frame)
+                    # faces = self.faceCascade.detectMultiScale(
+                    #     gray,
+                    #     scaleFactor=1.2,
+                    #     minNeighbors=5,
+                    #     minSize=(30, 30),
+                    #     flags=cv2.CASCADE_SCALE_IMAGE
+                    # )
+                    #
+                    # for (x, y, w, h) in faces:
+                    #     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
             time.sleep(delay_time)
+            frame = self.queue_out.get()
             self.frame_buffer.append(frame)
 
     def get_frame(self):
         return cv2.imencode('.png', self.frame_buffer[-1])[1].tobytes()
+
+    def _detect_face(self, gray, frame):
+        faces = self.faceCascade.detectMultiScale(
+            gray,
+            scaleFactor=1.2,
+            minNeighbors=5,
+            minSize=(30, 30),
+            flags=cv2.CASCADE_SCALE_IMAGE
+        )
+
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        self.queue_out.put(frame)

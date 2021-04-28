@@ -22,13 +22,12 @@ class Camera(Thread):
         delay_time = 1 / self.fps
         while True:
             code, frame = self.camera.read()
+            if len(self.frame_buffer) == self.buffer_max_size:
+                self.frame_buffer = self.frame_buffer[1:]
 
             if self.face_detection:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 if code:
-                    if len(self.frame_buffer) == self.buffer_max_size:
-                        self.frame_buffer = self.frame_buffer[1:]
-
                     faces = self.faceCascade.detectMultiScale(
                         gray,
                         scaleFactor=1.2,

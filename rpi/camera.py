@@ -21,7 +21,9 @@ class Camera(Thread):
 
         self.queue_in = Queue()
         self.queue_out = Queue()
-        self.tpe = ThreadPoolExecutor(15)
+        # self.tpe = ThreadPoolExecutor(15)
+        self.face_detection_thread = Thread(target=self._detect_face, daemon=True)
+        self.face_detection_thread.start()
 
     def run(self):
         delay_time = 1 / self.fps
@@ -31,37 +33,50 @@ class Camera(Thread):
                 self.frame_buffer = self.frame_buffer[1:]
 
             if self.face_detection:
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                if code:
-                    self.tpe.submit(self._detect_face, gray, frame)
-                    # faces = self.faceCascade.detectMultiScale(
-                    #     gray,
-                    #     scaleFactor=1.2,
-                    #     minNeighbors=5,
-                    #     minSize=(30, 30),
-                    #     flags=cv2.CASCADE_SCALE_IMAGE
-                    # )
-                    #
-                    # for (x, y, w, h) in faces:
-                    #     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                self.queue_in.put((code, frame))
+                # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                # if code:
+                #     self.tpe.submit(self._detect_face, gray, frame)
+                time.sleep(delay_time)
+                frame = self.queue_out.get()
+            else:
+                time.sleep(delay_time)
 
-            time.sleep(delay_time)
-            frame = self.queue_out.get()
             self.frame_buffer.append(frame)
 
     def get_frame(self):
         return cv2.imencode('.png', self.frame_buffer[-1])[1].tobytes()
 
-    def _detect_face(self, gray, frame):
-        faces = self.faceCascade.detectMultiScale(
-            gray,
-            scaleFactor=1.2,
-            minNeighbors=5,
-            minSize=(30, 30),
-            flags=cv2.CASCADE_SCALE_IMAGE
-        )
+    # def _detect_face(self, gray, frame):
+    #     faces = self.faceCascade.detectMultiScale(
+    #         gray,
+    #         scaleFactor=1.2,
+    #         minNeighbors=5,
+    #         minSize=(30, 30),
+    #         flags=cv2.CASCADE_SCALE_IMAGE
+    #     )
+    #
+    #     for (x, y, w, h) in faces:
+    #         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    #
+    #     self.queue_out.put(frame)
 
-        for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    def _detect_face(self):
+        while True:
+            code, frame = self.queue_in.get()
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            if code:
+                # self.tpe.submit(self._detect_face, gray, frame)
 
-        self.queue_out.put(frame)
+                faces = self.faceCascade.detectMultiScale(
+                        gray,
+                        scaleFactor=1.2,
+                        minNeighbors=5,
+                        minSize=(30, 30),
+                        flags=cv2.CASCADE_SCALE_IMAGE
+                    )
+
+                for (x, y, w, h) in faces:
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+                self.queue_out.put(frame)

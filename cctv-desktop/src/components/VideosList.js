@@ -9,7 +9,7 @@ const VideosList = () => {
   const [text, setText] = useState('');
 
   const handleAdd = () => {
-    setVideos(prev => [...prev, `http://${text}:5000/`]);
+    setVideos(prev => [...prev, text]);
     setText('');
   };
 
@@ -43,7 +43,7 @@ const VideosList = () => {
 
         </Grid>
         <Grid item container spacing={2} justify="center">
-          {videos.map((video, i) => <VideoElement key={i} imgUrl={video} />)}
+          {videos.map((video, i) => <VideoElement key={i} ip={video} />)}
         </Grid>
       </Grid>
     </Box>

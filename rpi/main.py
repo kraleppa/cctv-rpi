@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, jsonify
 from camera import Camera
 
 app = Flask(__name__)
@@ -34,9 +34,17 @@ def video_feed():
 def face_detection_trigger():
     camera.face_detection = not camera.face_detection
     if camera.face_detection:
-        return 'Face detection turned ON', 200
+        return jsonify({'isTurnedOn': True}), 200
     else:
-        return 'Face detection turned OFF', 200
+        return jsonify({'isTurnedOn': False}), 200
+
+
+@app.route('/detection/face/status', methods=['GET'])
+def face_detection_status():
+    if camera.face_detection:
+        return jsonify({'isTurnedOn': True}), 200
+    else:
+        return jsonify({'isTurnedOn': False}), 200
 
 
 if __name__ == '__main__':

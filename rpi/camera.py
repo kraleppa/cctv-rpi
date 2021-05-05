@@ -44,3 +44,6 @@ class Camera(Thread):
 
     def get_frame(self):
         return cv2.imencode('.png', self.frame_buffer[-1])[1].tobytes()
+
+    def switch_face_detection(self):
+        self.face_detection = not self.face_detection

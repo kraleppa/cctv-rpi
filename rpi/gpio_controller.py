@@ -6,7 +6,7 @@ class GpioController:
         self.led = LED(led_pin)
         self.button1 = Button(button1_pin)
 
-        self.button1.when_activated = self.__button1_action__
+        self.button1.when_activated = self.button1_action
 
-    def __button1_action__(self):
+    def button1_action(self):
         self.led.toggle()

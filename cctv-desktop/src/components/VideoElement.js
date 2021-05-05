@@ -18,6 +18,9 @@ const VideoElement = ({ip}) => {
           <Button variant="contained" onClick={handleChange}>
             Rozponawanie twarzy
           </Button>
+          <Box style={{borderRadius: '50%'}}>
+            
+          </Box>
       
         </Box>
 

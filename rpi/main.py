@@ -42,10 +42,5 @@ def face_detection_trigger():
         return 'Face detection turned OFF', 200
 
 
-@app.route('/detection/is_turned_on')
-def face_detection_trigger():
-    return camera.get_face_detection()
-
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True)

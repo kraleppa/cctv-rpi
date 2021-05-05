@@ -36,7 +36,7 @@ def video_feed():
 @app.route('/detection/face', methods=['POST'])
 def face_detection_trigger():
     camera.switch_face_detection()
-    if camera.face_detection:
+    if camera.get_face_detection():
         return 'Face detection turned ON', 200
     else:
         return 'Face detection turned OFF', 200
@@ -44,7 +44,7 @@ def face_detection_trigger():
 
 @app.route('/detection/is_turned_on')
 def face_detection_trigger():
-    return camera.face_detection
+    return camera.get_face_detection()
 
 
 if __name__ == '__main__':

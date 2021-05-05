@@ -19,7 +19,7 @@ class Camera(Thread):
         self.frame_buffer = []
 
         self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        self.face_detection = False
+        self.__face_detection__ = False
 
     def run(self):
         delay_time = 1 / self.fps
@@ -28,7 +28,7 @@ class Camera(Thread):
             if len(self.frame_buffer) == self.buffer_max_size:
                 self.frame_buffer = self.frame_buffer[1:]
 
-            if self.face_detection:
+            if self.__face_detection__:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 if code:
                     faces = self.faceCascade.detectMultiScale(
@@ -50,6 +50,12 @@ class Camera(Thread):
 
     def switch_face_detection(self):
         self.lock.acquire()
-        self.face_detection = not self.face_detection
-        self.gpio_controller.switch_led(self.face_detection)
+        self.face_detection = not self.__face_detection__
+        self.gpio_controller.switch_led(self.__face_detection__)
         self.lock.release()
+
+    def get_face_detection(self):
+        self.lock.acquire()
+        ret = self.__face_detection__
+        self.lock.release()
+        return ret

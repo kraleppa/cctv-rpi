@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, Response
 from camera import Camera
 from gpio_controller import GpioController
@@ -40,6 +42,13 @@ def face_detection_trigger():
         return 'Face detection turned ON', 200
     else:
         return 'Face detection turned OFF', 200
+
+
+@app.route('/state')
+def get_state():
+    return json.dumps({
+        "face_detection": camera.get_face_detection()
+    })
 
 
 if __name__ == '__main__':

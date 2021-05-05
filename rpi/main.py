@@ -5,7 +5,7 @@ from gpio_controller import GpioController
 app = Flask(__name__)
 camera = Camera()
 camera.start()
-GpioController()
+GpioController(camera)
 
 
 @app.after_request

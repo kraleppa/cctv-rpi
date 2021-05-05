@@ -1,8 +1,13 @@
-from flask import Flask, Response, request
+import json
+
+from flask import Flask, Response
 from camera import Camera
+from gpio_controller import GpioController
 
 app = Flask(__name__)
 camera = Camera()
+gpio_controller = GpioController(camera)
+camera.gpio_controller = gpio_controller
 camera.start()
 
 
@@ -32,11 +37,18 @@ def video_feed():
 
 @app.route('/detection/face', methods=['POST'])
 def face_detection_trigger():
-    camera.face_detection = not camera.face_detection
-    if camera.face_detection:
+    camera.switch_face_detection()
+    if camera.get_face_detection():
         return 'Face detection turned ON', 200
     else:
         return 'Face detection turned OFF', 200
+
+
+@app.route('/state')
+def get_state():
+    return json.dumps({
+        "face_detection": camera.get_face_detection()
+    })
 
 
 if __name__ == '__main__':

@@ -19,7 +19,7 @@ class Camera(Thread):
         self.frame_buffer = []
 
         self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        self.face_detection = True
+        self.face_detection = False
 
     def run(self):
         delay_time = 1 / self.fps

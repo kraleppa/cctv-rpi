@@ -50,7 +50,7 @@ class Camera(Thread):
 
     def switch_face_detection(self):
         self.lock.acquire()
-        self.face_detection = not self.__face_detection__
+        self.__face_detection__ = not self.__face_detection__
         self.gpio_controller.switch_led(self.__face_detection__)
         self.lock.release()
 

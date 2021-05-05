@@ -1,9 +1,11 @@
-from flask import Flask, Response, request
+from flask import Flask, Response
 from camera import Camera
+from gpio_controller import GpioController
 
 app = Flask(__name__)
 camera = Camera()
 camera.start()
+GpioController()
 
 
 @app.after_request

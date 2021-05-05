@@ -12,3 +12,9 @@ class GpioController:
 
     def button1_action(self):
         self.camera.switch_face_detection()
+
+    def switch_led(self, value):
+        if value:
+            self.led.on()
+        else:
+            self.led.off()

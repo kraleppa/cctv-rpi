@@ -9,6 +9,7 @@ class Camera(Thread):
     def __init__(self, fps=20, video_source=0):
         Thread.__init__(self)
         self.lock = threading.Lock()
+        self.gpio_controller = None
 
         self.fps = fps
         self.camera = cv2.VideoCapture(video_source)
@@ -50,4 +51,5 @@ class Camera(Thread):
     def switch_face_detection(self):
         self.lock.acquire()
         self.face_detection = not self.face_detection
+        self.gpio_controller.switch_led(self.face_detection)
         self.lock.release()

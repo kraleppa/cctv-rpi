@@ -1,5 +1,5 @@
 import threading
-
+from concurrent.futures import ThreadPoolExecutor
 import cv2
 from threading import Thread
 import time
@@ -20,6 +20,8 @@ class Camera(Thread):
 
         self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.__face_detection__ = False
+
+        self._tpe = ThreadPoolExecutor(100)
 
         self.cooldown_reverse_counter = 0
 
@@ -48,10 +50,9 @@ class Camera(Thread):
 
                     print(self.cooldown_reverse_counter)
 
-                    if len(faces) > 0 and self.cooldown_reverse_counter > 50:
+                    if len(faces) > 0 and self.cooldown_reverse_counter > 100:
                         self.cooldown_reverse_counter = 0
-                        name = f'frame_{time.time()}.jpg'
-                        cv2.imwrite(name, frame)
+                        self._tpe.submit(self._save_photo, frame)
 
             time.sleep(delay_time)
             self.frame_buffer.append(frame)
@@ -62,7 +63,7 @@ class Camera(Thread):
     def switch_face_detection(self):
         self.lock.acquire()
         self.__face_detection__ = not self.__face_detection__
-        # self.gpio_controller.switch_led(self.__face_detection__) # FIXME uncomment
+        self.gpio_controller.switch_led(self.__face_detection__)
         self.lock.release()
 
     def get_face_detection(self):
@@ -70,3 +71,8 @@ class Camera(Thread):
         ret = self.__face_detection__
         self.lock.release()
         return ret
+
+    @staticmethod
+    def _save_photo(frame):
+        name = f'photos/frame_{time.time()}.jpg'
+        cv2.imwrite(name, frame)

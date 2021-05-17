@@ -2,6 +2,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 import cv2
 from threading import Thread
+import datetime
 import time
 
 
@@ -74,5 +75,5 @@ class Camera(Thread):
 
     @staticmethod
     def _save_photo(frame):
-        name = f'photos/frame_{time.time()}.jpg'
+        name = f'photos/frame_{datetime.datetime.utcnow().isoformat("T")}.jpg'  # name in RFC 3339 format
         cv2.imwrite(name, frame)

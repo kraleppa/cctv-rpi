@@ -52,7 +52,7 @@ def get_state():
     })
 
 
-@app.route('/images/all')
+@app.route('/images/names')
 def get_images_names():
     img_names = []
     for _, _, img_names in walk('./images/'):

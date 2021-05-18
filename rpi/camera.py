@@ -75,5 +75,5 @@ class Camera(Thread):
 
     @staticmethod
     def _save_photo(frame):
-        name = f'photos/frame_{datetime.datetime.utcnow().isoformat("T")}.jpg'  # name in RFC 3339 format
+        name = f'images/frame_{datetime.datetime.now().isoformat("T")}.jpg'  # name in RFC 3339 format
         cv2.imwrite(name, frame)

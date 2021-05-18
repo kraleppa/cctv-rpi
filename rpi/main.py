@@ -1,8 +1,9 @@
 import json
 
-from flask import Flask, Response
+from flask import Flask, Response, send_file
 from camera import Camera
 from gpio_controller import GpioController
+from os import walk
 
 app = Flask(__name__)
 camera = Camera()
@@ -49,6 +50,27 @@ def get_state():
     return json.dumps({
         "face_detection": camera.get_face_detection()
     })
+
+
+@app.route('/images/all')
+def get_images_names():
+    img_names = []
+    for _, _, img_names in walk('./images/'):
+        pass
+    for file in img_names:
+        if ".jpg" not in file:
+            img_names.remove(file)
+    return json.dumps({
+        "images": img_names
+    })
+
+
+@app.route('/images/<name>')
+def get_image_by_name(name):
+    for _, _, img_names in walk('./images/'):
+        if name in img_names:
+            return send_file('./images/'+name, mimetype='image/jpeg')
+    return "Error:Image does not exists", 404
 
 
 if __name__ == '__main__':

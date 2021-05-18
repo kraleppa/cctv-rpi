@@ -65,7 +65,7 @@ def get_images_names():
     })
 
 
-@app.route('/images/<name>')
+@app.route('/images/id/<name>')
 def get_image_by_name(name):
     for _, _, img_names in walk('./images/'):
         if name in img_names:

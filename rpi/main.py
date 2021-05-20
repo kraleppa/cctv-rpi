@@ -3,7 +3,7 @@ import json
 from flask import Flask, Response, send_file
 from camera import Camera
 from gpio_controller import GpioController
-from os import walk
+from os import walk, remove
 
 app = Flask(__name__)
 camera = Camera()
@@ -65,12 +65,21 @@ def get_images_names():
     })
 
 
-@app.route('/images/id/<name>')
+@app.route('/images/id/<name>', methods=['GET'])
 def get_image_by_name(name):
     for _, _, img_names in walk('./images/'):
         if name in img_names:
             return send_file('./images/'+name, mimetype='image/jpeg')
-    return "Error:Image does not exists", 404
+    return "Error: Image does not exists", 404
+
+
+@app.route('/images/id/<name>', methods=['DELETE'])
+def delete_image_by_name(name):
+    for _, _, img_names in walk('./images/'):
+        if name in img_names:
+            remove(f'./images/{name}')
+            return "OK", 200
+    return "Error: Image not found", 404
 
 
 if __name__ == '__main__':

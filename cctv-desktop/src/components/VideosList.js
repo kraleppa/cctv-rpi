@@ -21,8 +21,6 @@ const VideosList = () => {
   const handleChange = (event) => {
     setText(event.target.value);
   };
-
-  console.log(videos);
   
   
   return (

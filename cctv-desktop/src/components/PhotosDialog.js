@@ -13,6 +13,7 @@ import List from '@material-ui/core/List';
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import { DialogContent } from '@material-ui/core';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 const PhotosDialog = ({ip, handleClose, open}) => {
   const [photos, setPhotos] = useState([]);
@@ -22,20 +23,38 @@ const PhotosDialog = ({ip, handleClose, open}) => {
     fetch(`http://${ip}:5000/images/names`)
       .then(data => data.json())
       .then(json => setPhotos(json.images));
-  }, [photo]);
+  }, [open]);
+
+  const handleDelete = (event, name) => {
+    event.stopPropagation();
+    event.cancelBubble = true;
+    setPhoto('');
+    setPhotos(photos.filter(photo => photo !== name));
+    fetch(`http://${ip}:5000/images/id/${name}`, {
+      method: 'DELETE'
+    }).catch(error => console.warn(error));
+  };
+
+  const handlePick = (event, name) => {
+    event.stopPropagation();
+    event.cancelBubble = true;
+    setPhoto(name);
+  };
 
   const renderPhoto = (name) => {
     return (
-      <>
-        <ListItem button onClick={() => setPhoto(name)}>
+      <Box key={name}>         
+        <ListItem button onClick={(event) => handlePick(event, name)}>
           <ListItemText primary={name} />
+          <IconButton onClick={(event) => handleDelete(event, name)}>
+            <NotInterestedIcon fontSize="large" color="secondary"/>
+          </IconButton>
         </ListItem>
         <Divider />
-      </>
+      </Box>
+
     );
   };
-
-  console.log(photo);
 
   return (
     <Dialog fullScreen open={open} onClose={handleClose}>

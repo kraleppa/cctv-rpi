@@ -1,4 +1,4 @@
-import {React, useState} from 'react';
+import {React, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Grid, Typography, IconButton} from '@material-ui/core';
 import PhotoIcon from '@material-ui/icons/Photo';
@@ -7,9 +7,19 @@ import FaceIcon from '@material-ui/icons/Face';
 
 
 const VideoElement = ({ip}) => {
-  // eslint-disable-next-line no-unused-vars
   const [faceDetection, setFaceDetection] = useState(false);
   const [dialog, setDialog] = useState(false);
+
+  
+  useEffect(() => {
+    const fetchData = () => {
+      fetch(`http://${ip}:5000/state`)
+        .then(data => data.json())
+        .then(json => setFaceDetection(json.face_detection));
+    };
+    const pollInterval = setInterval(() => fetchData(), 500);
+    return () => {clearInterval(pollInterval); console.log(pollInterval);};
+  }, []);
 
 
   const handleChange = () => {
@@ -28,7 +38,14 @@ const VideoElement = ({ip}) => {
 
         <Grid item>
           <IconButton onClick={handleChange}>
-            <FaceIcon fontSize="large"/>
+            {
+              faceDetection ? (
+                <FaceIcon fontSize="large" color="primary" />
+              ) : (
+                <FaceIcon fontSize="large"/>
+              )
+            }
+            
           </IconButton>
           <IconButton onClick={() => setDialog(true)}>
             <PhotoIcon fontSize="large"/>

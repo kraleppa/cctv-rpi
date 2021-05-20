@@ -1,8 +1,16 @@
-import React from 'react';
+import {React, useState} from 'react';
 import PropTypes from 'prop-types';
-import {Grid, Box, Typography, Button} from '@material-ui/core';
+import {Grid, Box, Typography, IconButton} from '@material-ui/core';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import PhotoIcon from '@material-ui/icons/Photo';
+
 
 const VideoElement = ({ip}) => {
+  // eslint-disable-next-line no-unused-vars
+  const [faceDetection, setFaceDetection] = useState(false);
+
+
   const handleChange = () => {
     fetch(`http://${ip}:5000/detection/face`, {
       method: 'POST'
@@ -11,21 +19,33 @@ const VideoElement = ({ip}) => {
 
   return (
     <Grid item >
-      <img src={`http://${ip}:5000/`}/>
       <Box textAlign="center">
         <Typography variant="h4">{ip}</Typography>
-        <Box mt={3}>
-          <Button variant="contained" onClick={handleChange}>
-            Rozponawanie twarzy
-          </Button>
-          <Box style={{borderRadius: '50%'}}>
-            
-          </Box>
-      
-        </Box>
+      </Box>
+      <img src={`http://${ip}:5000/`}/>
+      <Box mt={3}>
+        <Grid container justify="space-around">
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={faceDetection}
+                  onChange={handleChange}
+                  name="checkedB"
+                  color="primary"
+                />
+              }
+              label="Wykrywanie twarzy"
+            />
+          </Grid>
+          <Grid item>
+            <IconButton>
+              <PhotoIcon fontSize="large"/>
+            </IconButton>
+          </Grid>
+        </Grid>
 
       </Box>
-
     </Grid>
 
   );

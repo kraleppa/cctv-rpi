@@ -10,7 +10,7 @@ class GpioController:
         self.button2 = Button(button2_pin)
 
         self.button1.when_activated = self.button1_action
-        self.button2.when_activated = self.button1_action
+        self.button2.when_activated = self.button2_action
 
     def button1_action(self):
         self.camera.switch_face_detection()

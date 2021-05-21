@@ -1,13 +1,14 @@
 import {React, useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
 import {Grid, Typography, IconButton} from '@material-ui/core';
 import PhotoIcon from '@material-ui/icons/Photo';
 import PhotosDialog from './PhotosDialog';
 import FaceIcon from '@material-ui/icons/Face';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 
-const VideoElement = ({ip}) => {
+// eslint-disable-next-line react/prop-types
+const VideoElement = ({ip, onDelete}) => {
   const [faceDetection, setFaceDetection] = useState(false);
   const [dialog, setDialog] = useState(false);
 
@@ -54,11 +55,15 @@ const VideoElement = ({ip}) => {
             }
             
           </IconButton>
+          <IconButton onClick={handleTakePhoto}>
+            <PhotoCameraIcon fontSize="large" />
+          </IconButton>
           <IconButton onClick={() => setDialog(true)}>
             <PhotoIcon fontSize="large"/>
           </IconButton>
-          <IconButton onClick={handleTakePhoto}>
-            <PhotoCameraIcon fontSize="large" />
+
+          <IconButton onClick={() => onDelete(ip)}>
+            <NotInterestedIcon fontSize="large"/>
           </IconButton>
         </Grid>
 
@@ -70,10 +75,5 @@ const VideoElement = ({ip}) => {
 
   );
 };
-
-VideoElement.propTypes = {
-  ip: PropTypes.string
-};
-  
 
 export default VideoElement;

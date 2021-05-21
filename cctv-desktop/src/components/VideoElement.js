@@ -4,6 +4,7 @@ import {Grid, Typography, IconButton} from '@material-ui/core';
 import PhotoIcon from '@material-ui/icons/Photo';
 import PhotosDialog from './PhotosDialog';
 import FaceIcon from '@material-ui/icons/Face';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 
 
 const VideoElement = ({ip}) => {
@@ -28,6 +29,12 @@ const VideoElement = ({ip}) => {
     });
   };
 
+  const handleTakePhoto = () => {
+    fetch(`http://${ip}:5000/images/save`, {
+      method: 'POST',
+    });
+  };
+
   return (
     <Grid item >
       <img src={`http://${ip}:5000/`}/>
@@ -49,6 +56,9 @@ const VideoElement = ({ip}) => {
           </IconButton>
           <IconButton onClick={() => setDialog(true)}>
             <PhotoIcon fontSize="large"/>
+          </IconButton>
+          <IconButton onClick={handleTakePhoto}>
+            <PhotoCameraIcon fontSize="large" />
           </IconButton>
         </Grid>
 

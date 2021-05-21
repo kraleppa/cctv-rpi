@@ -56,9 +56,9 @@ class Camera(Thread):
                         self.cooldown_reverse_counter = 0
                         self._tpe.submit(self._save_photo, frame)
 
-                    if self.__save_photo__:
-                        self._tpe.submit(self._save_photo, frame)
-                        self.__save_photo__ = False
+            if self.__save_photo__:
+                self._tpe.submit(self._save_photo, frame)
+                self.__save_photo__ = False
 
             time.sleep(delay_time)
             self.frame_buffer.append(frame)

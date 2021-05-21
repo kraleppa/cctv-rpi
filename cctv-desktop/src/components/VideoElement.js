@@ -5,12 +5,14 @@ import PhotosDialog from './PhotosDialog';
 import FaceIcon from '@material-ui/icons/Face';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
-
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 // eslint-disable-next-line react/prop-types
 const VideoElement = ({ip, onDelete}) => {
   const [faceDetection, setFaceDetection] = useState(false);
   const [dialog, setDialog] = useState(false);
+  const [snackbar, setSnackbar] = useState('');
 
   
   useEffect(() => {
@@ -27,13 +29,13 @@ const VideoElement = ({ip, onDelete}) => {
   const handleChange = () => {
     fetch(`http://${ip}:5000/detection/face`, {
       method: 'POST'
-    });
+    }).then(data => console.log(data));
   };
 
   const handleTakePhoto = () => {
     fetch(`http://${ip}:5000/images/save`, {
       method: 'POST',
-    });
+    }).then(() => setSnackbar('Obraz został zapisany'));
   };
 
   return (
@@ -71,6 +73,12 @@ const VideoElement = ({ip, onDelete}) => {
       </Grid>
 
       <PhotosDialog handleClose={() => setDialog(false)} ip={ip} open={dialog}/>
+      <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}} 
+        open={snackbar} autoHideDuration={3000} onClose={() => setSnackbar('')}>
+        <Alert onClose={() => setSnackbar('')} severity="success" variant="filled" elevation={6}>
+          Obraz został zapisany
+        </Alert>
+      </Snackbar>
     </Grid>
 
   );

@@ -44,6 +44,7 @@ def face_detection_trigger():
         "face_detection": face_detection
     })
 
+
 @app.route('/state')
 def get_state():
     return json.dumps({

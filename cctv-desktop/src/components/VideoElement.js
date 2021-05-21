@@ -29,7 +29,8 @@ const VideoElement = ({ip, onDelete}) => {
   const handleChange = () => {
     fetch(`http://${ip}:5000/detection/face`, {
       method: 'POST'
-    }).then(data => console.log(data));
+    }).then(data => data.json())
+      .then(json => setSnackbar('Wykrywanie twarzy ' + (json.face_detection ? 'włączone' : 'wyłączone')));
   };
 
   const handleTakePhoto = () => {
@@ -74,9 +75,9 @@ const VideoElement = ({ip, onDelete}) => {
 
       <PhotosDialog handleClose={() => setDialog(false)} ip={ip} open={dialog}/>
       <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}} 
-        open={snackbar} autoHideDuration={3000} onClose={() => setSnackbar('')}>
+        open={snackbar !== ''} autoHideDuration={3000} onClose={() => setSnackbar('')}>
         <Alert onClose={() => setSnackbar('')} severity="success" variant="filled" elevation={6}>
-          Obraz został zapisany
+          {snackbar}
         </Alert>
       </Snackbar>
     </Grid>

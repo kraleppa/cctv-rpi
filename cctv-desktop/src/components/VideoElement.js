@@ -1,14 +1,18 @@
 import {React, useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
 import {Grid, Typography, IconButton} from '@material-ui/core';
 import PhotoIcon from '@material-ui/icons/Photo';
 import PhotosDialog from './PhotosDialog';
 import FaceIcon from '@material-ui/icons/Face';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
-
-const VideoElement = ({ip}) => {
+// eslint-disable-next-line react/prop-types
+const VideoElement = ({ip, onDelete}) => {
   const [faceDetection, setFaceDetection] = useState(false);
   const [dialog, setDialog] = useState(false);
+  const [snackbar, setSnackbar] = useState('');
 
   
   useEffect(() => {
@@ -25,7 +29,14 @@ const VideoElement = ({ip}) => {
   const handleChange = () => {
     fetch(`http://${ip}:5000/detection/face`, {
       method: 'POST'
-    });
+    }).then(data => data.json())
+      .then(json => setSnackbar('Wykrywanie twarzy ' + (json.face_detection ? 'włączone' : 'wyłączone')));
+  };
+
+  const handleTakePhoto = () => {
+    fetch(`http://${ip}:5000/images/save`, {
+      method: 'POST',
+    }).then(() => setSnackbar('Obraz został zapisany'));
   };
 
   return (
@@ -47,8 +58,15 @@ const VideoElement = ({ip}) => {
             }
             
           </IconButton>
+          <IconButton onClick={handleTakePhoto}>
+            <PhotoCameraIcon fontSize="large" />
+          </IconButton>
           <IconButton onClick={() => setDialog(true)}>
             <PhotoIcon fontSize="large"/>
+          </IconButton>
+
+          <IconButton onClick={() => onDelete(ip)}>
+            <NotInterestedIcon fontSize="large"/>
           </IconButton>
         </Grid>
 
@@ -56,14 +74,15 @@ const VideoElement = ({ip}) => {
       </Grid>
 
       <PhotosDialog handleClose={() => setDialog(false)} ip={ip} open={dialog}/>
+      <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left'}} 
+        open={snackbar !== ''} autoHideDuration={3000} onClose={() => setSnackbar('')}>
+        <Alert onClose={() => setSnackbar('')} severity="success" variant="filled" elevation={6}>
+          {snackbar}
+        </Alert>
+      </Snackbar>
     </Grid>
 
   );
 };
-
-VideoElement.propTypes = {
-  ip: PropTypes.string
-};
-  
 
 export default VideoElement;

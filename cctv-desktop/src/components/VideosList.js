@@ -21,6 +21,10 @@ const VideosList = () => {
   const handleChange = (event) => {
     setText(event.target.value);
   };
+
+  const handleDelete = (ip) => {
+    setVideos(videos.filter(video => video !== ip));
+  };
   
   
   return (
@@ -41,7 +45,7 @@ const VideosList = () => {
 
         </Grid>
         <Grid item container spacing={2} justify="center">
-          {videos.map((video, i) => <VideoElement key={i} ip={video} />)}
+          {videos.map((video, i) => <VideoElement key={i} ip={video} onDelete={handleDelete} />)}
         </Grid>
       </Grid>
     </Box>

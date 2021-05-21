@@ -39,11 +39,10 @@ def video_feed():
 @app.route('/detection/face', methods=['POST'])
 def face_detection_trigger():
     camera.switch_face_detection()
-    if camera.get_face_detection():
-        return 'Face detection turned ON', 200
-    else:
-        return 'Face detection turned OFF', 200
-
+    face_detection = camera.get_face_detection()
+    return json.dumps({
+        "face_detection": face_detection
+    })
 
 @app.route('/state')
 def get_state():
@@ -69,7 +68,7 @@ def get_images_names():
 def get_image_by_name(name):
     for _, _, img_names in walk('./images/'):
         if name in img_names:
-            return send_file('./images/'+name, mimetype='image/jpeg')
+            return send_file('./images/' + name, mimetype='image/jpeg')
     return "Error: Image does not exists", 404
 
 
@@ -80,6 +79,12 @@ def delete_image_by_name(name):
             remove(f'./images/{name}')
             return "OK", 200
     return "Error: Image not found", 404
+
+
+@app.route('/images/save', methods=['POST'])
+def save_photo():
+    camera.save_photo()
+    return "OK", 200
 
 
 if __name__ == '__main__':

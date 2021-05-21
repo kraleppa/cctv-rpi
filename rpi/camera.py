@@ -21,6 +21,7 @@ class Camera(Thread):
 
         self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         self.__face_detection__ = False
+        self.__save_photo__ = False
 
         self._tpe = ThreadPoolExecutor(100)
 
@@ -55,6 +56,10 @@ class Camera(Thread):
                         self.cooldown_reverse_counter = 0
                         self._tpe.submit(self._save_photo, frame)
 
+            if self.__save_photo__:
+                self._tpe.submit(self._save_photo, frame)
+                self.__save_photo__ = False
+
             time.sleep(delay_time)
             self.frame_buffer.append(frame)
 
@@ -72,6 +77,11 @@ class Camera(Thread):
         ret = self.__face_detection__
         self.lock.release()
         return ret
+
+    def save_photo(self):
+        self.lock.acquire()
+        self.__save_photo__ = True
+        self.lock.release()
 
     @staticmethod
     def _save_photo(frame):

@@ -69,7 +69,7 @@ def get_images_names():
 def get_image_by_name(name):
     for _, _, img_names in walk('./images/'):
         if name in img_names:
-            return send_file('./images/'+name, mimetype='image/jpeg')
+            return send_file('./images/' + name, mimetype='image/jpeg')
     return "Error: Image does not exists", 404
 
 
@@ -80,6 +80,12 @@ def delete_image_by_name(name):
             remove(f'./images/{name}')
             return "OK", 200
     return "Error: Image not found", 404
+
+
+@app.route('/images/save', methods=['POST'])
+def save_photo():
+    camera.save_photo()
+    return "OK", 200
 
 
 if __name__ == '__main__':

@@ -1,3 +1,8 @@
+"""
+This file contains all logic for capturing and processing video from camera.
+Detection and read/write operation on disk are performed here.
+"""
+
 import threading
 from concurrent.futures import ThreadPoolExecutor
 import cv2

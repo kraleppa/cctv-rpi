@@ -16,7 +16,7 @@ class GpioController:
         self.camera.switch_face_detection()
 
     def button2_action(self):
-        self.camera.save_photo()
+        self.camera.set_save_photo_flag()
 
     def switch_led(self, value):
         if value:

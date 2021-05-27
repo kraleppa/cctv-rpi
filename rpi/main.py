@@ -39,7 +39,7 @@ def video_feed():
 @app.route('/detection/face', methods=['POST'])
 def face_detection_trigger():
     camera.switch_face_detection()
-    face_detection = camera.get_face_detection()
+    face_detection = camera.get_face_detection_status()
     return json.dumps({
         "face_detection": face_detection
     })
@@ -48,7 +48,7 @@ def face_detection_trigger():
 @app.route('/state')
 def get_state():
     return json.dumps({
-        "face_detection": camera.get_face_detection()
+        "face_detection": camera.get_face_detection_status()
     })
 
 
@@ -84,7 +84,7 @@ def delete_image_by_name(name):
 
 @app.route('/images/save', methods=['POST'])
 def save_photo():
-    camera.save_photo()
+    camera.set_save_photo_flag()
     return "OK", 200
 
 
